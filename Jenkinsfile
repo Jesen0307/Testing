@@ -12,26 +12,10 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    # Install semgrep via pip if not present
-                    if ! command -v semgrep &>/dev/null; then
-                        pip3 install semgrep || pip3 install --user semgrep
-                    fi
-
-                    # Install python3 if not present (use apt on Debian/Ubuntu)
-                    if ! command -v python3 &>/dev/null; then
-                        sudo apt-get update && sudo apt-get install -y python3 python3-pip
-                    fi
-
-                    # Install docker if not present
-                    if ! command -v docker &>/dev/null; then
-                        sudo apt-get update && sudo apt-get install -y docker.io
-                        sudo systemctl start docker
-                    fi
-
-                    # Install curl (used by sonarqube-scan.sh for polling)
-                    if ! command -v curl &>/dev/null; then
-                        sudo apt-get install -y curl
-                    fi
+                    sudo apt-get update
+                    sudo apt-get install -y python3 python3-pip python3-venv curl docker.io
+                    sudo systemctl start docker
+                    sudo pip3 install semgrep --break-system-packages || sudo pip3 install semgrep
                 '''
             }
         }
